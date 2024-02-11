@@ -1,0 +1,60 @@
+.triple-triad-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    // Vars
+    $cardHeight: 120px;
+    $cardWidth: 93px;
+    $redCard: linear-gradient(180deg, rgba(255, 255, 255, 1) 22%, rgba(255, 0, 48, 1) 71%);
+    $blueCard: linear-gradient(180deg, rgba(255, 255, 255, 1) 22%, rgba(0, 212, 255, 1) 71%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & .hand {
+        display: flex;
+        flex-direction: column;
+
+        & .score {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bolder;
+        }
+    }
+
+    & .board {
+        display: grid;
+        grid-template-columns: repeat(3, $cardWidth);
+        grid-template-rows: repeat(3, $cardHeight);
+        text-align: center;
+        margin: 10px;
+
+        & .cell {
+            border: 1px dashed black;
+            cursor: pointer;
+
+            &:hover {
+                background: lightcyan;
+            }
+        }
+    }
+
+    & .card {
+        height: $cardHeight;
+        width: $cardWidth;
+        border: 2px solid gold;
+        margin: 3px 0;
+        // Card colors
+        &--red-card {
+            background: $redCard;
+        }
+
+        &--blue-card {
+            background: $blueCard;
+        }
+
+        &:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    }
+}
