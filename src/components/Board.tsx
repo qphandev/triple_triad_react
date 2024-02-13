@@ -1,9 +1,13 @@
 import React from 'react'
 
-function Board() {
+export function Board() {
     return (
         <div>Board</div>
     )
 }
 
-export default Board
+export function Cell() {
+    return (
+        <div>Cell</div>
+    )
+}
