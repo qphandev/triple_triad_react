@@ -38,23 +38,37 @@
         }
     }
 
-    & .card {
-        height: $cardHeight;
-        width: $cardWidth;
+    & .card-container {
+
         border: 2px solid gold;
         margin: 3px 0;
-        // Card colors
-        &--red-card {
-            background: $redCard;
-        }
-
-        &--blue-card {
-            background: $blueCard;
-        }
 
         &:hover {
             transform: scale(1.1);
             cursor: pointer;
         }
+
+        &--selected {
+            border: 2px solid red;
+            transform: scale(1.1);
+        }
+
+        & .card {
+            height: $cardHeight;
+            width: $cardWidth;
+
+            // Card colors
+            &--red-card {
+                background: $redCard;
+            }
+
+            &--blue-card {
+                background: $blueCard;
+            }
+        }
+    }
+
+    & .no-clicks {
+        pointer-events: none;
     }
 }
