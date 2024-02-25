@@ -7,6 +7,8 @@ The error message you're seeing indicates that GitHub has discontinued support f
 
 ### Using a Personal Access Token (PAT) for HTTPS:
 
+Usually you will be prompted to put in user and password if you're trying to touch a private repo.
+
 1. **Generate a Personal Access Token on GitHub**:
    - Go to your GitHub settings.
    - Navigate to "Developer settings" > "Personal access tokens".
