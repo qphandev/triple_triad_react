@@ -11,23 +11,25 @@ export interface ICardProps {
     handIndex?: number,
     handleClickItem?: React.MouseEventHandler<HTMLDivElement>,
     className?: string,
+    flipped?: boolean
 }
 
 export function Card({ card,
     color,
     handIndex,
-    handleClickItem, 
-    className}: ICardProps) {
+    handleClickItem,
+    className,
+    flipped = true }: ICardProps) {
 
     const cardImagePath = card.img;
 
     // TODO: I FORGOT YOU CAN ONLY PASS IN STRINGS TO DATA-ATTRIBUTES
     return (
-        <div className={clsx(`card card--${color}-card`, className)}
+        <div className={clsx(`card card--${color}-card`, className, { 'flipped': flipped })}
             data-cardid={card.id}
             data-handindex={handIndex}
             onClick={handleClickItem}>
             <img src={`${CARD_PATH}/${cardImagePath}`} alt="Card" />
-        </div>
+        </div >
     )
 }

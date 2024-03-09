@@ -27,6 +27,7 @@ const PLAYER_HAND_RED = [
 export interface ICellState {
     isOccupied: boolean | null,
     color: "blue" | "red",
+    flipped: boolean,
     card: CardObjType,
     element: null | "fire" | "water" // etc...
 };
@@ -39,11 +40,6 @@ export interface IClickedItem {
     card: CardObjType
 }
 
-/**
- * if card is placed on board, check to see if there's adjacent cards
- *  
- */
-
 function GameManager() {
 
     const [isBlueTurn, setIsBlueTurn] = useState<boolean>(true);
@@ -51,10 +47,6 @@ function GameManager() {
     const [board, setBoard] = useState<ICellState[]>(BOARD_CELLS);
     const [playerBlueHand, setPlayerBlueHand] = useState<(CardObjType | null)[]>(PLAYER_HAND_BLUE)
     const [playerRedHand, setPlayerRedHand] = useState<(CardObjType | null)[]>(PLAYER_HAND_RED)
-
-    console.log('BOARDDD')
-    console.log(board)
-    console.log('BOARDDD')
 
     function handleHandClick(e: React.MouseEvent<HTMLDivElement>) {
 
@@ -78,7 +70,6 @@ function GameManager() {
     // Check empty cell
     function handleBoardClick(e: React.MouseEvent<HTMLDivElement>) {
         const boardCellIndex: number = Number(e.currentTarget.dataset.boardindex);
-        console.log(`${boardCellIndex} index was clicked on Board!`)
         const isCardFocused = !!clickedItem;
         const isCellOccupied = board[boardCellIndex]?.isOccupied;
 
@@ -86,33 +77,44 @@ function GameManager() {
         if (isCardFocused && clickedItem.area !== "board" && clickedItem.area && !isCellOccupied) {
             const clickedCard = clickedItem.card;
 
-            removeFromHand(clickedItem.index, clickedItem.area)
-            addToBoard(boardCellIndex, clickedItem.card, clickedItem.area)
-            setClickedItem(null)
-            // Check for neighbors
+            // Create a copy of board
+            let newBoardArray = [...board];
+
+            // Remove card from hand
+            removeFromHand(clickedItem.index, clickedItem.area);
+
+            // Add card to the board copy
+            newBoardArray[boardCellIndex] = {
+                ...newBoardArray[boardCellIndex],
+                card: clickedCard,
+                isOccupied: true,
+                color: isBlueTurn ? "blue" : "red"
+            };
+
+            // Check neighbors on the board copy
+            checkNeighbors(boardCellIndex, clickedCard, newBoardArray);
+
+            // Update the board state with the board copy
+            setBoard(newBoardArray);
+
+            // Checks for neighbors
             if (clickedCard) {
-                checkNeighbors(boardCellIndex, clickedCard); 
+                // checkNeighbors(boardCellIndex, clickedCard);
             }
-            else console.log(`No placedCard found!`)
+
+            setClickedItem(null)
 
             setIsBlueTurn(prev => !prev)
         }
     }
 
-    function checkNeighbors(index: number, placedCard: CardObjType) {
-        // for (const neighbor of NEIGHBOR_CELLS[index]) {
-        //     // Perform necessary checks or operations for neighbor
-        //     const isTop = index - 3 === neighbor;
-        // }
-        // I have the placed card's index, I have the neighbors, I have the placed card's stats, I have the neighbor's stats
-
+    function checkNeighbors(index: number, placedCard: CardObjType, newBoardArray: ICellState[]) {
         console.log(`Checking neighbors for ${placedCard.name} at index ${index}`)
 
         // ++2 % 4 is the formula to get the opposite direction
         const neighbors = NEIGHBOR_CELLS[index];
-        let newBoardArray = board;
 
-        // goes through neighbors and decides what to do with them
+        // FIRST LOOP: goes through neighbors and decides what to do with them
         neighbors.forEach((neighbor, i) => {
 
             // If we have a neighbor...
@@ -121,25 +123,18 @@ function GameManager() {
                 if (!neighborCard || !placedCard) return;
                 const placedCardStats = placedCard.stats;
                 const neighborCardStats = neighborCard.stats;
-                const oppositeDirection = (i + 2) % 4;
+                const neighborOpposingStat = (i + 2) % 4;
 
-                console.log(`neighborCard: ${neighborCard.name}, placedCardStats: ${placedCardStats}, neighborCardStats: ${neighborCardStats}, oppositeDirection: ${oppositeDirection}`)
+                console.log(`neighborCard: ${neighborCard.name}, placedCardStats: ${placedCardStats}, neighborCardStats: ${neighborCardStats}, oppositeDirection of neighbor: ${neighborOpposingStat} or ${neighborCardStats[neighborOpposingStat]} VS ${placedCardStats[i]}`)
 
-                if (placedCardStats[i] > neighborCardStats[oppositeDirection]) {
-                    // Flip the neighbor's card to the placed card's color
-                    newBoardArray = board.map((cell, index) => {
-                        return neighbor === index ?
-                            {
-                                ...cell,
-                                color: isBlueTurn ? "blue" : "red"
-                            } :
-                            cell
-                    })
+                if (placedCardStats[i] > neighborCardStats[neighborOpposingStat]) {
+                    // Directly modify the color of the relevant cell
+                    newBoardArray[neighbor].color = isBlueTurn ? "blue" : "red";
+                    newBoardArray[neighbor].flipped = true;
                 }
-                setBoard(newBoardArray);
+                // return newBoardArray;
             }
         })
-        
     }
 
     /**
@@ -161,6 +156,7 @@ function GameManager() {
                 } :
                 cell
         })
+        // checkNeighbors(boardIndex, card);
         setBoard(newBoardArray);
     }
 

@@ -14,10 +14,3 @@ export const NEIGHBOR_CELLS = [
     [4, 8, null, 6], // cell 7
     [5, null, null, 7] // cell 8
 ];
-
-// if a card is placed on the board, look for its placed index, map that to its neighbors, and then compare the card's stats to the neighbors by doing the following:
-// 1. If the neighbor's card is null, do nothing
-// 2. If the neighbor's card is not null, compare the stats of the cards,
-// Each card's stats is [up, right, down, left], if a card is placed and has a RIGHT neighbor, compare the placed card's RIGHT stat to the neighbor's LEFT stat
-// If the placed card's RIGHT stat is higher than the neighbor's LEFT stat, flip the neighbor's card to the placed card's color
-// help me write the above in code
